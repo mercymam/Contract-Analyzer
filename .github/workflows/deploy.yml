@@ -22,8 +22,8 @@ jobs:
         run: |
           zip -r function.zip .  # Package Lambda code into a zip file
           aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --zip-file fileb://function.zip
-#      - name: Rollback Lambda Function (if needed)
-#        if: failure()
-#        run: |
-#          PREVIOUS_VERSION=$(aws lambda list-versions-by-function --function-name my-lambda-function --query "versions[-2]" --output text)
-#          aws lambda update-function-code --function-name my-lambda-function --qualifier $PREVIOUS_VERSION --zip-file fileb://function.zip
+      - name: Rollback Lambda Function (if needed)
+        if: failure()
+        run: |
+          PREVIOUS_VERSION=$(aws lambda list-versions-by-function --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --query "versions[-2]" --output text)
+          aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --qualifier $PREVIOUS_VERSION --zip-file fileb://function.zip
