@@ -18,7 +18,3 @@ async def extract_pdf_text(file_path: str):
         all_text += text or ""
 
     logger.info('Successfully extracted text from PDF with filename: %s', file_path)
-
-if __name__ == "__main__":
-    file_path = r"C:\Users\mercy\Downloads\Cv George Enike 1.pdf"
-    asyncio.run(extract_pdf_text(file_path))
