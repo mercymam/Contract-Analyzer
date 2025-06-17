@@ -27,8 +27,7 @@ jobs:
           cd package && zip -r ../lambda.zip .
       - name: Deploy to AWS Lambda
         run: |
-          zip -r function.zip .  # Package Lambda code into a zip file
-          aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --zip-file fileb://function.zip
+          aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --zip-file fileb://lambda.zip
       - name: Rollback Lambda Function (if needed)
         if: failure()
         run: |
