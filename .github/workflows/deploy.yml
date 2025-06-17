@@ -15,9 +15,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: Install dependencies
+      - name: Install dependencies into ./package
         run: |
           pip install -r requirements.txt -t package/
+      - name: Copy Lambda function into ./package
+        run: |
+          cp lambda_function.py package/
+      - name: Zip package into lambda.zip
+        run: |
+          cd package && zip -r ../lambda.zip .
       - name: Deploy to AWS Lambda
         run: |
           zip -r function.zip .  # Package Lambda code into a zip file
