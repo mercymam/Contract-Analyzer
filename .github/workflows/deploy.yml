@@ -17,7 +17,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements.txt -t package/
       - name: Deploy to AWS Lambda
         run: |
           zip -r function.zip .  # Package Lambda code into a zip file
