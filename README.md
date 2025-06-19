@@ -4,7 +4,7 @@ Tenanalyze is an AI-powered tenancy contract analyzer designed to simplify and s
 Tenancy contracts are often riddled with complex legal language, vague clauses, and hidden obligations that most tenants—and even some landlords—struggle to fully understand. As a result, people are frequently blindsided by terms they didn’t realize they agreed to, leading to financial loss, legal disputes, and immense stress.
 According to Shelter UK, A UK survey found that 1 in 5 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts—before it's too late.
 
-Built using AWS Lambda as its backbone, Tenanalyze intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, therby making legal documents more transparent and accessible for everyone.
+Built using AWS Lambda as its backbone, Tenanalyze intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
 
 Whether you're a tenant, landlord, or property manager, Tenanalyze ensures you're never caught off-guard by legal jargon again.
 
