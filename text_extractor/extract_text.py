@@ -18,3 +18,4 @@ async def extract_pdf_text(file_path: str):
         all_text += text or ""
 
     logger.info('Successfully extracted text from PDF with filename: %s', file_path)
+    return all_text
