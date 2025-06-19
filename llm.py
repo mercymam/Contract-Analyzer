@@ -69,6 +69,8 @@ def call_llm_api(prompt, text, provider="openai", model="gpt-3.5-turbo"):
     else:
         raise ValueError("Provider must be either 'openai' or 'claude'.")
 
+
+
 # Example usage:
 # call_llm_api("Summarize the following text:", "Your text here", provider="openai")
 prompt="""Summarise the following text: """
