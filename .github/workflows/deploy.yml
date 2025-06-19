@@ -17,7 +17,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Install dependencies into ./package
         run: |
-          pip install -r requirements.txt -t package/
+          uv pip install .
       - name: Copy Lambda function into ./package
         run: |
           cp lambda_function.py package/
@@ -31,5 +31,12 @@ jobs:
       - name: Rollback Lambda Function (if needed)
         if: failure()
         run: |
-          PREVIOUS_VERSION=$(aws lambda list-versions-by-function --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --query "versions[-2]" --output text)
-          aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --qualifier $PREVIOUS_VERSION --zip-file fileb://function.zip
+          PREVIOUS_VERSION=$(aws lambda list-versions-by-function \
+            --function-name Contract_Analyzer \
+            --query "Versions[-3].Version" \
+            --output text)
+
+          aws lambda update-alias \
+            --function-name Contract_Analyzer \
+            --name live \
+            --function-version $PREVIOUS_VERSION

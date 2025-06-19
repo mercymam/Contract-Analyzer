@@ -11,9 +11,9 @@ A tool for analyzing contracts using LLM APIs (OpenAI and Claude).
    source .venv/bin/activate
    ```
 
-3. **Install dependencies from `requirements.txt`:**
+3. **Install dependencies from `pyproject.toml`:**
    ```bash
-   uv pip install -r requirements.txt
+   uv pip install .
    ```
 
    Alternatively, you can add new dependencies with:
