@@ -31,6 +31,7 @@ jobs:
           
       - name: Copy Lambda function into ./package
         run: |
+          ls -la
           cp lambda_function.py package/
           cp llm.py package/
           cp -r ./src/text_extractor/ package/src/text_extractor
