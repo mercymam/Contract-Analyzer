@@ -6,7 +6,7 @@ import logging
 import os
 import tempfile
 from urllib.parse import unquote_plus
-from text_extractor.extract_text import extract_pdf_text
+from contract_analyzer.text_extractor.extract_text import extract_pdf_text
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
