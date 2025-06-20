@@ -2,7 +2,7 @@ name: Deploy to AWS Lambda
 on:
   push:
     branches:
-      - main
+      - '**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,9 +22,13 @@ jobs:
       - name: Add uv to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
+      - name: Create virtual environment
+        run: uv venv
+        
       - name: Install dependencies into ./package
         run: |
-          uv pip install .
+          uv pip install . --target ./package
+          
       - name: Copy Lambda function into ./package
         run: |
           cp lambda_function.py package/
