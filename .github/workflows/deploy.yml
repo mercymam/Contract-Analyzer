@@ -27,7 +27,8 @@ jobs:
         
       - name: Install dependencies into ./package
         run: |
-          uv pip install .
+          uv pip install . --target ./package
+          
       - name: Copy Lambda function into ./package
         run: |
           cp lambda_function.py package/
