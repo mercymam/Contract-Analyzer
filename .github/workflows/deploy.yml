@@ -33,7 +33,7 @@ jobs:
         run: |
           cp lambda_function.py package/
           cp llm.py package/
-          cp -r src/contract_analyzer/text_extractor/ package/src/contract_analyzer/text_extractor
+          cp -r src/ package/src/
       - name: Zip package into lambda.zip
         run: |
           cd package && zip -r ../lambda.zip .
