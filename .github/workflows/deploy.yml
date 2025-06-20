@@ -32,7 +32,8 @@ jobs:
       - name: Copy Lambda function into ./package
         run: |
           cp lambda_function.py package/
-          cp -r text_extractor/ package/text_extractor
+          cp llm.py package/
+          cp -r src/text_extractor/ package/src/text_extractor
       - name: Zip package into lambda.zip
         run: |
           cd package && zip -r ../lambda.zip .
