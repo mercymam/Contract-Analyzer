@@ -1,10 +1,6 @@
-import asyncio
 import logging
-from typing import Any
 
 import tiktoken
-
-from text_extractor.extract_text import extract_pdf_text
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

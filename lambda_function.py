@@ -5,11 +5,11 @@ import boto3
 import logging
 import os
 import tempfile
-from data_processing.truncator import truncate_to_fit
+from src.data_processing.truncator import truncate_to_fit
 from urllib.parse import unquote_plus
-from text_extractor.extract_text import extract_pdf_text
-from data_processing.llm import call_llm_api
-from prompt.prompt import tenancy_analysis_prompt
+from src.text_extractor.extract_text import extract_pdf_text
+from src.data_processing.llm import call_llm_api
+from src.prompt.prompt import tenancy_analysis_prompt
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
