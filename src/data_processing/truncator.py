@@ -1,24 +1,15 @@
 import logging
 
-import tiktoken
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def count_tokens(text: str, model: str, provider: str) -> int:
     if provider == "openai":
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
+        return int(len(text) / 4)
     elif provider == "claude":
-        return estimate_tokens_claude(text)
+        return int(len(text) / 3.5)
     else:
         raise ValueError("Unsupported provider")
-
-
-def estimate_tokens_claude(text: str) -> int:
-    # Claude token estimation: ~1 token = 3.5 characters (varies)
-    return int(len(text) / 3.5)
-
 
 def truncate_to_fit(prompt: str, text: str, model: str, provider: str, buffer: int = 1000) -> list[str]:
     key = f"{provider}:{model}"
