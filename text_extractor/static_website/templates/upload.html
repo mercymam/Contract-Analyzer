@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Flask App</title>
+  </head>
+  <body>
+    <h1>{{ message }}</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="document">Upload a document:</label>
+        <input type="file" id="document" name="contract" accept=".pdf,.doc,.docx,.txt" />
+        <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
