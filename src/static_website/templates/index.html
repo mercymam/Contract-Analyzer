@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+   <head>
+     <title>Contract Analyser </title>
+   </head>
+   <body>
+    <style>
+      .center-form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        gap: 10px; /* space between inputs */
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+
+    </style>
+     <h1 style="text-align: center;">{{ message }}</h1>
+     <img src="{{url_for('static', filename='tenalyzer.png')}}" alt="My Image" style="display: block; margin: 0 auto; width: 300px; height: auto;">
+     <form  class="center-form" action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="document">Upload your Tenancy:</label>
+        <input type="file" id="document" name="contract" accept=".pdf,.doc,.docx,.txt" />
+        <button type="submit">Submit</button>
+     </form>
+
+   </body>
+</html>
+
