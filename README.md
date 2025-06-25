@@ -34,7 +34,7 @@ A tool for analyzing contracts using LLM APIs (OpenAI and Claude).
 The `call_llm_api` function now reads API keys from environment variables, so you no longer need to pass them as arguments:
 
 ```python
-from llm import call_llm_api
+from src.data_processing.llm import call_llm_api
 
 # For OpenAI
 call_llm_api("Summarize the following text:", "Your text here", provider="openai")

@@ -1,3 +1,8 @@
+[build-system]
+name = "setuptools"
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "contract-analyzer"
 version = "0.1.0"
@@ -9,4 +14,11 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "requests>=2.32.4",
     "urllib3<2",
+    "tiktoken==0.5.1"
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
