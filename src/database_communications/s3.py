@@ -25,7 +25,3 @@ def download_file_path_from_s3(event) -> dict[str, int | str] | str:
     s3.download_file(bucket_name, s3_file_name, tmp_file_path)
     logger.info(f"Downloaded file to: {tmp_file_path}")
     return tmp_file_path
-
-def upload_file_to_s3(bucket_name: str, file_name: str, file_content: bytes, content_type: str = "text/plain") -> None:
-        s3.put_object(Bucket=bucket_name, Key=file_name, Body=file_content, ContentType=content_type)
-        logger.info(f"Uploaded file to S3: {file_name}")

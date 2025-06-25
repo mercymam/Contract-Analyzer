@@ -25,14 +25,6 @@ async def extract_pdf_text(file_path: str):
 def extract_uuid_from_filename(filename: str) -> str:
     base = os.path.basename(filename)
     name, _ = os.path.splitext(base)
-
-    if '_' not in name:
-        raise ValueError("Filename does not contain an underscore to extract UUID.")
-
     parts = name.split('_')
     uuid_part = parts[-1]
-
-    if len(uuid_part) != 5:
-        raise ValueError("UUID segment must be 5 characters long.")
-
     return uuid_part

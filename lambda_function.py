@@ -6,7 +6,7 @@ import boto3
 
 from src.data_processing.truncator import truncate_to_fit
 from src.database_communications.dynamoDb import upload_to_dynamodb
-from src.database_communications.s3 import download_file_path_from_s3, upload_file_to_s3
+from src.database_communications.s3 import download_file_path_from_s3
 from src.file_processing.extract_file_details import extract_pdf_text, extract_uuid_from_filename
 from src.data_processing.llm import call_llm_api
 from src.prompt.prompt import tenancy_analysis_prompt
@@ -79,19 +79,16 @@ def handle_s3_trigger(event):
             if response:
                 ai_response += response
 
-        result_key = ""
+        file_identifier = extract_uuid_from_filename(tmp_file_path)
         if ai_response:
-            file_identifier = extract_uuid_from_filename(tmp_file_path)
-            result_key = f"{RESULT_PREFIX}/{file_identifier}.txt"
-            upload_file_to_s3(RESULT_BUCKET, result_key, ai_response.encode("utf-8"))
-            logger.info(f"Uploaded AI response to S3 at {result_key}")
             upload_to_dynamodb(file_identifier, ai_response)
+            logger.info(f"Uploaded AI response to dynamo_db at {file_identifier}")
 
         return {
             "statusCode": 200,
             "body": json.dumps({
                 "message": "Tenancy contract analyzed successfully",
-                "result_key": result_key,
+                "result_key": file_identifier,
                 "excerpt": ai_response[:500]
             })
         }
