@@ -23,10 +23,10 @@ dynamo_table = dynamodb.Table(DYNAMODB_TABLE)
 
 def lambda_handler(event, context):
     logger.info(f"Event received: {json.dumps(event)}")
-    if 'Records' in event and event['Records'][0].get('eventSource') == 'aws:database_communications':
+    if 'Records' in event and event['Records'][0].get('eventSource') == 'aws:s3':
         handle_s3_trigger(event)
     elif event.get('httpMethod') == 'GET' and event.get('pathParameters'):
-        handle_api_trigger(event, context)
+        handle_api_trigger(event)
     else: return{
         'statusCode': 400,
         'body': json.dumps({'error': 'Unsupported event type'})
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
 
 def handle_api_trigger(event):
     contract_id = event['pathParameters'].get('contractId')
-
+    logger.info(f"Successfully retrieved Contract ID: {contract_id}")
     if not contract_id:
         return {
             'statusCode': 400,
@@ -44,6 +44,8 @@ def handle_api_trigger(event):
     try:
         response = dynamo_table.get_item(Key={'contractId': contract_id})
         item = response.get('Item')
+        result_text = item.get('result', '')
+        logger.info(f"Result text: {result_text}")
 
         if not item:
             return {
@@ -54,7 +56,7 @@ def handle_api_trigger(event):
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
-            'body': json.dumps(item)
+            'body': json.dumps(result_text)
         }
 
     except Exception as e:
