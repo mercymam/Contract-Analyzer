@@ -8,13 +8,13 @@ import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-s3 = boto3.client('database_communications')
+s3 = boto3.client('s3')
 
 def download_file_path_from_s3(event) -> dict[str, int | str] | str:
     if 'Records' not in event or not event['Records']:
         raise ValueError("No S3 event records found.")
 
-    record = event['Records'][0]['database_communications']
+    record = event['Records'][0]['s3']
     bucket_name = unquote_plus(record['bucket']['name'])
     s3_file_name = unquote_plus(record['object']['key'])
 
