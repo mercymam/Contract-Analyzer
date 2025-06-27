@@ -21,10 +21,3 @@ async def extract_pdf_text(file_path: str):
 
     logger.info('Successfully extracted text from PDF with filename: %s', file_path)
     return all_text
-
-def extract_uuid_from_filename(filename: str) -> str:
-    base = os.path.basename(filename)
-    name, _ = os.path.splitext(base)
-    parts = name.split('_')
-    uuid_part = parts[-1]
-    return uuid_part

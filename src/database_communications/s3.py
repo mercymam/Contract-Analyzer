@@ -10,7 +10,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 s3 = boto3.client('s3')
 
-def download_file_path_from_s3(event) -> dict[str, int | str] | str:
+def download_file_path_from_s3(event) -> tuple[str, str]:
     if 'Records' not in event or not event['Records']:
         raise ValueError("No S3 event records found.")
 
@@ -24,4 +24,4 @@ def download_file_path_from_s3(event) -> dict[str, int | str] | str:
     tmp_file_path = os.path.join(tempfile.gettempdir(), download_filename)
     s3.download_file(bucket_name, s3_file_name, tmp_file_path)
     logger.info(f"Downloaded file to: {tmp_file_path}")
-    return tmp_file_path
+    return tmp_file_path, s3_file_name

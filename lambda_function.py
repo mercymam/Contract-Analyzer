@@ -7,7 +7,7 @@ import boto3
 from src.data_processing.truncator import truncate_to_fit
 from src.database_communications.dynamoDb import upload_to_dynamodb
 from src.database_communications.s3 import download_file_path_from_s3
-from src.file_processing.extract_file_details import extract_pdf_text, extract_uuid_from_filename
+from src.file_processing.extract_file_details import extract_pdf_text
 from src.data_processing.llm import call_llm_api
 from src.prompt.prompt import tenancy_analysis_prompt
 
@@ -16,7 +16,6 @@ logger.setLevel(logging.INFO)
 
 DYNAMODB_TABLE = 'contract-status'
 RESULT_BUCKET = 'contract-analyzer-bucket'
-RESULT_PREFIX = 'result'
 
 dynamodb = boto3.resource('dynamodb')
 dynamo_table = dynamodb.Table(DYNAMODB_TABLE)
@@ -65,7 +64,7 @@ def handle_api_trigger(event):
 
 def handle_s3_trigger(event):
     try:
-        tmp_file_path = download_file_path_from_s3(event)
+        tmp_file_path, file_identifier = download_file_path_from_s3(event)
         extracted_text = asyncio.run(extract_pdf_text(tmp_file_path))
         logger.info(f"Extracted text (first 200 chars): {extracted_text[:200]}")
 
@@ -77,7 +76,6 @@ def handle_s3_trigger(event):
             if response:
                 ai_response += response
 
-        file_identifier = extract_uuid_from_filename(tmp_file_path)
         if ai_response:
             upload_to_dynamodb(file_identifier, ai_response)
             logger.info(f"Uploaded AI response to dynamo_db at {file_identifier}")
@@ -114,16 +112,13 @@ def generate_presigned_url(event):
             'put_object',
             Params={
                 'Bucket': RESULT_BUCKET,
-                'Key': f'{RESULT_PREFIX}/{filename}',
+                'Key': f'{filename}',
                 'ContentType': 'application/pdf'
             },
             ExpiresIn=300  # 5 minutes
         )
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'url': presigned_url})
-        }
+        return presigned_url
 
     except Exception as e:
         logger.error("Error generating pre-signed URL", exc_info=True)
@@ -131,6 +126,4 @@ def generate_presigned_url(event):
             'statusCode': 500,
             'body': json.dumps({'error': str(e)})
         }
-
-
 
