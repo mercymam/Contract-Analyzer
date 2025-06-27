@@ -10,6 +10,7 @@ from src.database_communications.s3 import download_file_path_from_s3
 from src.file_processing.extract_file_details import extract_pdf_text
 from src.data_processing.llm import call_llm_api
 from src.prompt.prompt import tenancy_analysis_prompt
+from urllib.parse import unquote
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -34,7 +35,7 @@ def lambda_handler(event, context):
     }
 
 def handle_api_trigger(event):
-    contract_id = event.get('contractId')
+    contract_id = unquote(event.get('contractId'))
     logger.info(f"Successfully retrieved Contract ID: {contract_id}")
     if not contract_id:
         return {
@@ -99,7 +100,7 @@ def handle_s3_trigger(event):
 
 def generate_presigned_url(event):
     try:
-        filename = event.get('filename')
+        filename = unquote(event.get('filename'))
 
         if not filename:
             return {
