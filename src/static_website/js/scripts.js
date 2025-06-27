@@ -66,28 +66,28 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
 
 // Retry GET function
 function attemptGet(contractId, attemptNumber) {
-  console.log(`Attempt ${attemptNumber}: Fetching summary for ${contractId}`);
+  console.log(`Attempt ${attemptNumber}: Fetching status for ${contractId}`);
 
-  const statusUrl = `https://httpbin.org/get?contract_id=${encodeURIComponent(contractId)}`;
+  const fileName = 8962;
+  const statusUrl = `https://7ts7q7vvig.execute-api.eu-north-1.amazonaws.com/dev/status/${encodeURIComponent(fileName)}`;
 
   fetch(statusUrl)
-    .then(response => response.json())
-    .then(getData => {
-      console.log("GET response:", getData);
+    .then(response => {
+      console.log(`HTTP status code: ${response.status}`);
 
-      // Check if summary exists in response data
-      // This depends on your real API's response format
-      if (getData.summary) {
-        displaySummary(getData.summary);
-        alert(`Summary retrieved successfully for contract_id: ${contractId}`);
+      if (response.status === 200) {
+        return response.json();
       } else {
-        if (attemptNumber < 3) {
-          setTimeout(() => attemptGet(contractId, attemptNumber + 1), 3000);
-        } else {
-          alert(`Sorry, no summary available for contract_id: ${contractId} after 3 attempts.`);
-          displaySummary("No summary available.");
-        }
+        throw new Error(`Server returned status ${response.status}`);
       }
+    })
+    .then(getData => {
+      console.log("GET response JSON:", getData);
+
+      // Display the entire JSON as a string
+      displaySummary(JSON.stringify(getData, null, 2));
+
+      alert(`Response retrieved successfully for contract_id: ${contractId}`);
     })
     .catch(error => {
       console.error(`Error with GET request on attempt ${attemptNumber}:`, error);
