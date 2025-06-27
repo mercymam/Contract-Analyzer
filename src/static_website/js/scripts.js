@@ -1,6 +1,10 @@
 console.log("Script loaded.");
 
-// Handle the form POST request
+// Utility to generate a random contract_id
+function generateContractId() {
+  return 'contract_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+}
+
 document.getElementById("uploadForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
@@ -12,8 +16,16 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     return;
   }
 
+  // Generate a unique contract_id
+  const contractId = generateContractId();
+  console.log("Generated contract_id:", contractId);
+
+  // Store the ID in sessionStorage
+  sessionStorage.setItem("currentContractId", contractId);
+
   const formData = new FormData();
   formData.append("contract", file);
+  formData.append("contract_id", contractId); // Use contract_id in POST
 
   fetch("https://httpbin.org/post", {
     method: "POST",
@@ -22,15 +34,17 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
   .then(response => response.json())
   .then(data => {
     console.log("POST response:", data);
-    alert("File uploaded successfully (test). Now checking status in 3 seconds...");
+    alert(`File uploaded successfully.\nAssigned contract_id: ${contractId}\nChecking status in 3 seconds...`);
 
     // Wait 3 seconds then do GET request
     setTimeout(() => {
-      fetch("https://httpbin.org/get")
+      const storedId = sessionStorage.getItem("currentContractId");
+
+      fetch(`https://httpbin.org/get?contract_id=${encodeURIComponent(storedId)}`)
         .then(response => response.json())
         .then(getData => {
           console.log("GET response:", getData);
-          alert("GET request completed. Check console for details.");
+          alert(`GET request completed for contract_id: ${storedId}\nCheck console for details.`);
         })
         .catch(error => {
           console.error("Error with GET request:", error);
