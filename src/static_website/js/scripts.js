@@ -22,33 +22,37 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     .replace(/[^a-zA-Z0-9]/g, "")
     .toLowerCase();
 
-  const contractId = `${sanitizedFileName}_${generateContractId()}`;
+  const contractId = `${sanitizedFileName}_${generateContractId()}.pdf`;
   console.log("Generated contract_id:", contractId);
+  const presignedUrl = `https://7ts7q7vvig.execute-api.eu-north-1.amazonaws.com/dev/generate-presigned-url/${encodeURIComponent(contractId)}`;
+
   sessionStorage.setItem("currentContractId", contractId);
 
   // Step 1: GET the upload URL (dummy simulation)
-  fetch("https://httpbin.org/get?request=upload_endpoint")
+  fetch(presignedUrl)
     .then(response => response.json())
     .then(data => {
-      console.log("GET upload endpoint response:", data);
+      console.log("GET presigned endpoint response:", data);
 
-      // Simulate getting a real upload URL from the response
-      // For demo, use a dummy PUT endpoint that httpbin.org supports:
-      const uploadUrl = "https://httpbin.org/put";
+      // Step 2: PUT the file and contract_id to the presigned URL
+      const presignedUrl = data;
 
-      // Step 2: PUT the file and contract_id to the upload URL
-      const formData = new FormData();
-      formData.append("contract", file);
-      formData.append("contract_id", contractId);
 
-      return fetch(uploadUrl, {
+       // Step 2: PUT the raw PDF file to the presigned URL
+      return fetch(presignedUrl, {
         method: "PUT",
-        body: formData
+        headers: {
+          "Content-Type": "application/pdf"
+        },
+        body: file
       });
     })
-    .then(response => response.json())
-    .then(putResponse => {
-      console.log("PUT upload response:", putResponse);
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Upload failed with status ${response.status}`);
+      }
+
+      console.log("PUT upload successful.");
       alert(`File uploaded successfully.\nAssigned contract_id: ${contractId}\nChecking status shortly...`);
 
       // Step 3: Start repeated GET attempts to fetch results
