@@ -102,7 +102,6 @@ def handle_s3_trigger(event):
 def generate_presigned_url(event):
     try:
         filename = event.get('filename')
-        content_type = event.get('contentType', 'application/octet-stream')
 
         if not filename:
             return {
@@ -116,7 +115,7 @@ def generate_presigned_url(event):
             Params={
                 'Bucket': RESULT_BUCKET,
                 'Key': f'{RESULT_PREFIX}/{filename}',
-                'ContentType': content_type
+                'ContentType': 'application/pdf'
             },
             ExpiresIn=300  # 5 minutes
         )
