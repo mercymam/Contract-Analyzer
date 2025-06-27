@@ -25,15 +25,15 @@ def lambda_handler(event, context):
     logger.info(f"Event received: {json.dumps(event)}")
     if 'Records' in event and event['Records'][0].get('eventSource') == 'aws:s3':
         handle_s3_trigger(event)
-    elif event.get('httpMethod') == 'GET' and event.get('pathParameters'):
-        handle_api_trigger(event)
+    elif event.get('contractId'):
+        return handle_api_trigger(event)
     else: return{
         'statusCode': 400,
         'body': json.dumps({'error': 'Unsupported event type'})
     }
 
 def handle_api_trigger(event):
-    contract_id = event['pathParameters'].get('contractId')
+    contract_id = event.get('contractId')
     logger.info(f"Successfully retrieved Contract ID: {contract_id}")
     if not contract_id:
         return {
@@ -44,20 +44,14 @@ def handle_api_trigger(event):
     try:
         response = dynamo_table.get_item(Key={'contractId': contract_id})
         item = response.get('Item')
-        result_text = item.get('result', '')
-        logger.info(f"Result text: {result_text}")
-
         if not item:
             return {
                 'statusCode': 404,
                 'body': json.dumps({'error': 'Contract not found'})
             }
-
-        return {
-            'statusCode': 200,
-            'headers': {'Content-Type': 'application/json'},
-            'body': json.dumps(result_text)
-        }
+        result_text = item.get('result', '')
+        logger.info(f"Result text: {result_text}")
+        return result_text
 
     except Exception as e:
         logger.error("DynamoDB retrieval failed", exc_info=True)
