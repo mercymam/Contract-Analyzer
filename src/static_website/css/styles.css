@@ -1,28 +1,72 @@
-/* Center the form */
-.center-form {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 10px; /* space between inputs */
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+/* Reset default margins */
+body, h1, form {
+  margin: 0;
+  padding: 0;
 }
 
-/* Center the H1 */
-h1 {
+/* Set body styles */
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  color: #000000;
   text-align: center;
+  padding: 40px;
 }
 
-/* Center and size the logo image */
-.logo {
+/* Center the main heading */
+h1 {
+  font-weight: 300;
+  font-size: 2em;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* Center image */
+img {
   display: block;
-  margin: 0 auto;
-  width: 300px;
+  margin: 0 auto 30px auto;
+  max-width: 200px;
   height: auto;
+}
+
+/* Center and style the form */
+.center-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fafafa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Label styling */
+.center-form label {
+  font-size: 0.9em;
+  font-weight: 300;
+}
+
+/* File input styling */
+.center-form input[type="file"] {
+  font-size: 0.9em;
+  border: none;
+  background: transparent;
+}
+
+/* Submit button styling */
+.center-form button {
+  padding: 8px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Button hover effect */
+.center-form button:hover {
+  background-color: #333333;
 }
