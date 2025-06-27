@@ -27,7 +27,7 @@ def lambda_handler(event, context):
         handle_s3_trigger(event)
     elif event.get('contractId'):
         return handle_api_trigger(event)
-    elif event.get('action') == 'generate_presigned_url':
+    elif event.get('filename'):
         return generate_presigned_url(event)
     else: return{
         'statusCode': 400,
