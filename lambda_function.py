@@ -27,6 +27,8 @@ def lambda_handler(event, context):
         handle_s3_trigger(event)
     elif event.get('contractId'):
         return handle_api_trigger(event)
+    elif event.get('action') == 'generate_presigned_url':
+        return generate_presigned_url(event)
     else: return{
         'statusCode': 400,
         'body': json.dumps({'error': 'Unsupported event type'})
@@ -96,6 +98,40 @@ def handle_s3_trigger(event):
             "body": json.dumps({"Exception occurred": str(e)})
         }
 
+
+def generate_presigned_url(event):
+    try:
+        filename = event.get('filename')
+        content_type = event.get('contentType', 'application/octet-stream')
+
+        if not filename:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'Missing "filename"'})
+            }
+
+        s3_client = boto3.client('s3')
+        presigned_url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={
+                'Bucket': RESULT_BUCKET,
+                'Key': f'{RESULT_PREFIX}/{filename}',
+                'ContentType': content_type
+            },
+            ExpiresIn=300  # 5 minutes
+        )
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'url': presigned_url})
+        }
+
+    except Exception as e:
+        logger.error("Error generating pre-signed URL", exc_info=True)
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
+        }
 
 
 
