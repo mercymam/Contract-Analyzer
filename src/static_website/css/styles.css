@@ -1,0 +1,28 @@
+/* Center the form */
+.center-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between inputs */
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Center the H1 */
+h1 {
+  text-align: center;
+}
+
+/* Center and size the logo image */
+.logo {
+  display: block;
+  margin: 0 auto;
+  width: 300px;
+  height: auto;
+}
