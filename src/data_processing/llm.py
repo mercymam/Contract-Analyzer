@@ -13,16 +13,16 @@ logger.setLevel(logging.INFO)
 load_dotenv()
 
 
-async def call_llm_api_parallel(prompt, chunks, provider="openai", model="gpt-3.5-turbo") -> str:
+async def call_llm_api_parallel(prompt: str, chunks: list, provider="openai", model="gpt-3.5-turbo") -> str:
     """
     Calls the specified LLM API (OpenAI or Claude) with the given prompt and text.
     Prints the output from the LLM.
 
     Args:
-        prompt (str): The prompt to send to the LLM.
-        text (str): The text to provide as context or input.
-        provider (str): "openai" or "claude".
-        model (str): Model name for OpenAI (default: "gpt-3.5-turbo").
+        :param model: The prompt to send to the LLM.
+        :param provider: "openai" or "claude".
+        :param prompt: Model name for OpenAI (default: "gpt-3.5-turbo").
+        :param chunks: The text to provide as context or input.
     """
     if provider == "openai":
         tasks = [call_openai_api_async(prompt, chunks, model, i) for i, chunk in enumerate(chunks)]

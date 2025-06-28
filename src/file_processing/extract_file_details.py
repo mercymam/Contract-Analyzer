@@ -3,6 +3,7 @@ import asyncio
 
 from pypdf import PdfReader
 from src.data_processing.llm import call_llm_api_parallel
+from src.data_processing.truncator import truncate_to_fit
 from src.database_communications.dynamoDb import upload_to_dynamodb
 from src.prompt.prompt import tenancy_analysis_prompt
 
@@ -29,7 +30,8 @@ async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batc
             *[asyncio.to_thread(reader.pages[i].extract_text) for i in range(start, end)]
         )
         batch_combined = "".join(filter(None, batch_texts))
-        ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, batch_combined))
+        truncated_text = truncate_to_fit(tenancy_analysis_prompt, batch_combined, provider="openai", model="gpt-3.5-turbo")
+        ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, truncated_text))
         logger.info(f"Successfuly gotten AI response for batch {batches}")
         if end == page_count:
             status = "completed"

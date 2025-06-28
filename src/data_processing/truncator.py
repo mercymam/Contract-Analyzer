@@ -16,7 +16,7 @@ def truncate_to_fit(
     text: str,
     model: str,
     provider: str,
-    target_chunk_tokens: int = 3000
+    target_chunk_tokens: int = 5000
 ) -> list[str]:
     key = f"{provider}:{model}"
     limit = TOKEN_LIMITS.get(key, target_chunk_tokens)
@@ -39,7 +39,7 @@ def truncate_to_fit(
 
 
 TOKEN_LIMITS = {
-    "openai:gpt-3.5-turbo": 3000, #max token limit 16385
+    "openai:gpt-3.5-turbo": 4000, #max token limit 16385
     "openai:gpt-4": 2000, # max token limit 8192,
     "openai:gpt-4o": 8000, # 128000,
     "claude:claude-3-haiku": 200000,
