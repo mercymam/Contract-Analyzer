@@ -1,15 +1,10 @@
 import asyncio
 import json
 import logging
-
 import boto3
 
-from src.data_processing.truncator import truncate_to_fit
-from src.database_communications.dynamoDb import upload_to_dynamodb
 from src.database_communications.s3 import download_file_path_from_s3
-from src.file_processing.extract_file_details import extract_pdf_text
-from src.data_processing.llm import call_llm_api_parallel
-from src.prompt.prompt import tenancy_analysis_prompt
+from src.file_processing.extract_file_details import process_pdf_text_in_batches
 from urllib.parse import unquote
 
 logger = logging.getLogger()
@@ -66,15 +61,8 @@ def handle_api_trigger(event):
 def handle_s3_trigger(event):
         try:
             tmp_file_path, file_identifier = download_file_path_from_s3(event)
-            extracted_text = asyncio.run(extract_pdf_text(tmp_file_path))
-            logger.info(f"Extracted text (first 200 chars): {extracted_text[:200]}")
-
-            truncated_texts = truncate_to_fit(tenancy_analysis_prompt, extracted_text, "gpt-3.5-turbo", "openai")
-            ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, truncated_texts))
-
-            if ai_response:
-                upload_to_dynamodb(file_identifier, ai_response)
-                logger.info(f"Uploaded AI response to dynamo_db at {file_identifier}")
+            ai_response = asyncio.run(process_pdf_text_in_batches(tmp_file_path, file_identifier))
+            logger.info(f"Summarised text (first 200 chars): {ai_response[:200]}")
 
             return {
                 "statusCode": 200,

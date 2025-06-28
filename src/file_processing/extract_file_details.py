@@ -2,21 +2,40 @@ import logging
 import asyncio
 
 from pypdf import PdfReader
+from src.data_processing.llm import call_llm_api_parallel
+from src.database_communications.dynamoDb import upload_to_dynamodb
+from src.prompt.prompt import tenancy_analysis_prompt
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-async def extract_pdf_text(file_path: str):
-    logger.info('Extracting text from PDF with filename: %s', file_path)
+
+async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batch_size: int = 5) -> list[str]:
+    logger.info('Extracting text from PDF in batches: %s', file_path)
 
     reader = await asyncio.to_thread(PdfReader, file_path)
     page_count = len(reader.pages)
-    all_text = ""
 
-    for i in range(page_count):
-        page = reader.pages[i]
-        text = await asyncio.to_thread(page.extract_text)
-        all_text += text or ""
+    batches = 0
+    status = "updating"
+    ai_responses = ""
 
-    logger.info('Successfully extracted text from PDF with filename: %s', file_path)
-    return all_text
+    for start in range(0, page_count, batch_size):
+        end = min(start + batch_size, page_count)
+        logger.info(f"Processing pages {start} to {end - 1} out of {page_count}")
+
+        # Extract each batch concurrently
+        batch_texts = await asyncio.gather(
+            *[asyncio.to_thread(reader.pages[i].extract_text) for i in range(start, end)]
+        )
+        batch_combined = "".join(filter(None, batch_texts))
+        ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, batch_combined))
+        logger.info(f"Successfuly gotten AI response for batch {batches}")
+        if end == page_count:
+            status = "completed"
+        upload_to_dynamodb(file_identifier, ai_response, status)
+        batches += 1
+        ai_responses += " " + ai_response
+
+    logger.info(f'Successfully extracted all {batches} text batches from {file_path}')
+    return ai_responses
