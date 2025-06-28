@@ -41,7 +41,7 @@ async def call_llm_api_parallel(prompt, chunks, provider="openai", model="gpt-3.
         raise ValueError("Provider must be either 'openai' or 'claude'.")
 
 
-def call_openai_api_async(prompt, text, model="gpt-3.5-turbo", chunk_index=0) -> str:
+async def call_openai_api_async(prompt, text, model="gpt-3.5-turbo", chunk_index=0) -> str:
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if openai_api_key is None:
         raise ValueError("OpenAI API key must be set in environment variable OPENAI_API_KEY.")
@@ -60,13 +60,13 @@ def call_openai_api_async(prompt, text, model="gpt-3.5-turbo", chunk_index=0) ->
     async with aiohttp.ClientSession() as client:
         async with client.post(url, headers=headers, json=data) as response:
             if response.status == 200:
-                result = response.json()
+                result = await response.json()
                 response_text = result["choices"][0]["message"]["content"]
                 logger.info(f"Chunk {chunk_index} response: {response_text[:100]}")
                 return response_text
             else:
-                raise Exception(f"OpenAI API Error: {response.status_code} {response.text}")
-
+                error_body = await response.text()
+                raise Exception(f"OpenAI API Error: {response.status} {error_body}")
 
 def call_claude_api(prompt, text) -> str:
     claude_api_key = os.getenv("CLAUDE_API_KEY")
