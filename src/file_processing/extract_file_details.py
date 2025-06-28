@@ -31,7 +31,7 @@ async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batc
         )
         batch_combined = "".join(filter(None, batch_texts))
         truncated_text = truncate_to_fit(tenancy_analysis_prompt, batch_combined, provider="openai", model="gpt-3.5-turbo")
-        ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, truncated_text))
+        ai_response = await call_llm_api_parallel(tenancy_analysis_prompt, truncated_text)
         logger.info(f"Successfuly gotten AI response for batch {batches}")
         if end == page_count:
             status = "completed"
