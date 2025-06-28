@@ -39,5 +39,5 @@ async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batc
         batches += 1
         ai_responses += " " + ai_response
 
-    logger.info(f'Successfully extracted all {batches} text for file Id: {file_identifier} and batches from {file_path}')
+    logger.info(f'Successfully extracted all {batches} chunks for file Id: {file_identifier} and batches from {file_path}')
     return ai_responses

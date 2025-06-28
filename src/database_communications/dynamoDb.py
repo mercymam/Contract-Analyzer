@@ -24,7 +24,7 @@ def upload_to_dynamodb(id: str, result: str, status="completed"):
 
     # Update item
     table.update_item(
-        Key={"file_id": id},
+        Key={"contractId": id},
         UpdateExpression="""
             SET summary = :combinedText,
                 #contract_status = :status,
