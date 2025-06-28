@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batch_size: int = 5) -> list[str]:
+async def process_pdf_text_in_batches(file_path: str, file_identifier: str, batch_size: int = 3) -> list[str]:
     logger.info('Extracting text for file Id: %s from PDF in batches: %s', file_identifier, file_path)
 
     reader = await asyncio.to_thread(PdfReader, file_path)
