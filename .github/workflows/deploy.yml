@@ -37,7 +37,12 @@ jobs:
       - name: Zip package into lambda.zip
         run: |
           cd package && zip -r ../lambda.zip .
-
+    
+      - name: Switch to another branch
+        run: |
+          git fetch origin CA-003
+          git checkout CA-003
+          
       - name: Update cloudfront hosted website
         run: |
           if aws s3 ls s3://contract-analyzer-bucket/website/ | grep -q .; then
