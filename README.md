@@ -6,7 +6,7 @@ According to Shelter UK, A UK survey found that 1 in 5 renters faced surprise ch
 
 Built using AWS Lambda as its backbone, Tenanalyze intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
 
-Whether you're a tenant, landlord, or property manager, Tenanalyze ensures you're never caught off-guard by legal jargon again.
+Tenanalyze ensures tenants are never caught off-guard by legal jargon again.
 
 ## 🚀 How Tenanalyzer Works
 
@@ -47,7 +47,7 @@ Results are appended batch-by-batch to ensure even partial analysis is recoverab
 We're not using generic AI outputs—we're extracting actionable, contract-specific insights with user safety and clarity in mind. Each result is useful even to users with no legal background.
 
 ### 6. Smart State Management and Storage in DynamoDB  
-Each result, along with a unique file ID, current status, and last update time, is stored in DynamoDB. 
+Each result, along with a unique file ID, current status, summary and last update time, is stored in DynamoDB. 
 **Why this matters:**  
 By writing once after the analysis completes, we reduce the number of write operations, saving cost and complexity. This also ensures that users only receive complete, validated summaries—eliminating the need to handle partial or inconsistent states in the UI. DynamoDB’s low-latency and high-availability guarantees make it ideal for real-time retrieval of contract summaries.
 
