@@ -25,7 +25,7 @@ async def call_llm_api_parallel(prompt: str, chunks: list, file_identifier:str, 
         :param chunks: The text to provide as context or input.
     """
     if provider == "openai":
-        tasks = [call_openai_api_async(prompt, chunks, model, i) for i, chunk in enumerate(chunks)]
+        tasks = [call_openai_api_async(prompt, chunk, file_identifier, model, i) for i, chunk in enumerate(chunks)]
         responses = await asyncio.gather(*tasks, return_exceptions=True)
 
         combined_response = ""

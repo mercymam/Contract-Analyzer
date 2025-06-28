@@ -1,6 +1,7 @@
 import json
 import logging
 import boto3
+import asyncio
 
 from src.database_communications.s3 import download_file_path_from_s3
 from src.file_processing.extract_file_details import process_pdf_text_in_batches
@@ -18,7 +19,7 @@ dynamo_table = dynamodb.Table(DYNAMODB_TABLE)
 def lambda_handler(event, context):
     logger.info(f"Event received: {json.dumps(event)}")
     if 'Records' in event and event['Records'][0].get('eventSource') == 'aws:s3':
-        handle_s3_trigger(event)
+        asyncio.run(handle_s3_trigger(event))
     elif event.get('contractId'):
         return handle_api_trigger(event)
     elif event.get('filename'):
@@ -45,7 +46,7 @@ def handle_api_trigger(event):
                 'statusCode': 404,
                 'body': json.dumps({'error': 'Contract not found'})
             }
-        result_text = item.get('result', '')
+        result_text = item.get('summary', '')
         logger.info(f"Result text: {result_text}")
         return result_text
 
@@ -98,7 +99,7 @@ def generate_presigned_url(event):
                 'Key': f'{filename}',
                 'ContentType': 'application/pdf'
             },
-            ExpiresIn=300  # 5 minutes
+            ExpiresIn=3000  # 5 minutes
         )
 
         return presigned_url
