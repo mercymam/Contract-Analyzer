@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 load_dotenv()
 
 
-async def call_llm_api_parallel(prompt: str, chunks: list, provider="openai", model="gpt-3.5-turbo") -> str:
+async def call_llm_api_parallel(prompt: str, chunks: list, file_identifier:str, provider="openai", model="gpt-3.5-turbo") -> str:
     """
     Calls the specified LLM API (OpenAI or Claude) with the given prompt and text.
     Prints the output from the LLM.
@@ -31,17 +31,17 @@ async def call_llm_api_parallel(prompt: str, chunks: list, provider="openai", mo
         combined_response = ""
         for r in responses:
             if isinstance(r, Exception):
-                logger.error(f"LLM chunk failed: {r}")
+                logger.error(f"LLM chunk for file Id: {file_identifier} failed: {r}")
             else:
                 combined_response += r
         return combined_response
     elif provider == "claude":
         return call_claude_api(prompt, chunks)
     else:
-        raise ValueError("Provider must be either 'openai' or 'claude'.")
+        raise ValueError(f"Provider for file Id: {file_identifier} must be either 'openai' or 'claude'.")
 
 
-async def call_openai_api_async(prompt, text, model="gpt-3.5-turbo", chunk_index=0) -> str:
+async def call_openai_api_async(prompt, text, file_identifier:str, model="gpt-3.5-turbo", chunk_index=0) -> str:
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if openai_api_key is None:
         raise ValueError("OpenAI API key must be set in environment variable OPENAI_API_KEY.")
@@ -57,16 +57,20 @@ async def call_openai_api_async(prompt, text, model="gpt-3.5-turbo", chunk_index
             {"role": "user", "content": text}
         ]
     }
-    async with aiohttp.ClientSession() as client:
-        async with client.post(url, headers=headers, json=data) as response:
-            if response.status == 200:
-                result = await response.json()
-                response_text = result["choices"][0]["message"]["content"]
-                logger.info(f"Chunk {chunk_index} response: {response_text[:100]}")
-                return response_text
-            else:
-                error_body = await response.text()
-                raise Exception(f"OpenAI API Error: {response.status} {error_body}")
+    try:
+        async with aiohttp.ClientSession() as client:
+            async with client.post(url, headers=headers, json=data) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    response_text = result["choices"][0]["message"]["content"]
+                    logger.info(f"Chunk {chunk_index} for file Id: {file_identifier} return successful response")
+                    return response_text
+                else:
+                    error_body = await response.text()
+                    raise Exception(f"OpenAI API Error: {response.status} {error_body}")
+    except Exception as e:
+        logger.error(f"Openai llm is failing for file Id {file_identifier}", exc_info=True)
+
 
 def call_claude_api(prompt, text) -> str:
     claude_api_key = os.getenv("CLAUDE_API_KEY")

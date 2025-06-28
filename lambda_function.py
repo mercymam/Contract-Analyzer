@@ -61,7 +61,7 @@ async def handle_s3_trigger(event):
         try:
             tmp_file_path, file_identifier = download_file_path_from_s3(event)
             ai_response = await process_pdf_text_in_batches(tmp_file_path, file_identifier)
-            logger.info(f"Summarised text (first 200 chars): {ai_response[:200]}")
+            logger.info(f"Summarised text for file Id: {file_identifier} (first 200 chars): {ai_response[:200]}")
 
             return {
                 "statusCode": 200,
