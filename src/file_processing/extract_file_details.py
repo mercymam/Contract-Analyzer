@@ -1,6 +1,5 @@
 import logging
 import asyncio
-import os
 
 from pypdf import PdfReader
 

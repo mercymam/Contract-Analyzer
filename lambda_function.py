@@ -8,7 +8,7 @@ from src.data_processing.truncator import truncate_to_fit
 from src.database_communications.dynamoDb import upload_to_dynamodb
 from src.database_communications.s3 import download_file_path_from_s3
 from src.file_processing.extract_file_details import extract_pdf_text
-from src.data_processing.llm import call_llm_api
+from src.data_processing.llm import call_llm_api_parallel
 from src.prompt.prompt import tenancy_analysis_prompt
 from urllib.parse import unquote
 
@@ -64,38 +64,33 @@ def handle_api_trigger(event):
 
 
 def handle_s3_trigger(event):
-    try:
-        tmp_file_path, file_identifier = download_file_path_from_s3(event)
-        extracted_text = asyncio.run(extract_pdf_text(tmp_file_path))
-        logger.info(f"Extracted text (first 200 chars): {extracted_text[:200]}")
+        try:
+            tmp_file_path, file_identifier = download_file_path_from_s3(event)
+            extracted_text = asyncio.run(extract_pdf_text(tmp_file_path))
+            logger.info(f"Extracted text (first 200 chars): {extracted_text[:200]}")
 
-        truncated_texts = truncate_to_fit(tenancy_analysis_prompt, extracted_text, "gpt-3.5-turbo", "openai")
-        ai_response = ""
-        for i, text in enumerate(truncated_texts):
-            logger.info(f"Calling LLM for chunk {i}")
-            response = call_llm_api(tenancy_analysis_prompt, text)
-            if response:
-                ai_response += response
+            truncated_texts = truncate_to_fit(tenancy_analysis_prompt, extracted_text, "gpt-3.5-turbo", "openai")
+            ai_response = asyncio.run(call_llm_api_parallel(tenancy_analysis_prompt, truncated_texts))
 
-        if ai_response:
-            upload_to_dynamodb(file_identifier, ai_response)
-            logger.info(f"Uploaded AI response to dynamo_db at {file_identifier}")
+            if ai_response:
+                upload_to_dynamodb(file_identifier, ai_response)
+                logger.info(f"Uploaded AI response to dynamo_db at {file_identifier}")
 
-        return {
-            "statusCode": 200,
-            "body": json.dumps({
-                "message": "Tenancy contract analyzed successfully",
-                "result_key": file_identifier,
-                "excerpt": ai_response[:500]
-            })
-        }
+            return {
+                "statusCode": 200,
+                "body": json.dumps({
+                    "message": "Tenancy contract analyzed successfully",
+                    "result_key": file_identifier,
+                    "excerpt": ai_response[:500]
+                })
+            }
 
-    except Exception as e:
-        logger.error(f"Unhandled exception", exc_info=True)
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"Exception occurred": str(e)})
-        }
+        except Exception as e:
+            logger.error("Unhandled exception", exc_info=True)
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"Exception occurred": str(e)})
+            }
 
 
 def generate_presigned_url(event):
