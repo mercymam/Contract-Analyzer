@@ -8,61 +8,82 @@ Built using AWS Lambda as its backbone, Tenanalyze intelligently scans tenancy c
 
 Whether you're a tenant, landlord, or property manager, Tenanalyze ensures you're never caught off-guard by legal jargon again.
 
-## How It Works
-Upload Your Contract
-Users upload their tenancy agreements via a web interface or API.
+## 🚀 How Tenanalyzer Works
 
-Trigger the Analyzer
-This upload event triggers an AWS Lambda function via S3 Event Notifications, kicking off the contract analysis pipeline.
+### 1. Upload Through a Seamless Web Interface  
+Users start at our lightweight web portal:  
+**https://d36zj33ar35qel.cloudfront.net**  
+This static front-end is globally distributed for low-latency, fast interaction, and zero cold starts.
 
-AI Contract Processing
-Our Lambda function invokes an AI model (powered by OpenAI or AWS Bedrock) that:
+### 2. Secure, Efficient File Uploads via Presigned URLs 
+The front-end uploads the files to our s3 bucket through a presigned url. It then uses this url to upload the contract directly to our S3 bucket.
 
-Parses the document
+**Why this matters:**  
+This keeps our backend stateless and secure, reducing risk and preventing unauthorised access while improving performance. By offloading file transfer to S3, our system avoids bottlenecks, improves upload reliability, and saves compute time.
 
-Extracts clauses (e.g., rent amount, duration, termination terms)
+### 3. Event-Driven Architecture Triggers PDF Processing  
+Once a contract lands in S3, it **automatically triggers** our backend contract-processing pipeline—no polling, no latency. This makes the service fully event-driven.
 
-Classifies them as positive, warning, or critical
+**Why this matters:**  
+This ensures scalability and responsiveness, especially under load. Files are processed immediately without any manual intervention or scheduling logic.
 
-Flags vague or unfair terms
+### 4. Asynchronous PDF Text Extraction  
+A Lambda function is triggered to read and extract the contract text. It handles:
+- Converting the PDF to raw text
+- Splitting large documents into smaller chunks to be within model limits
+- Logging and tracking progress
 
-Smart Summaries and Insights
-The output includes:
+**Why this matters:**  
+Text extraction is handled off the main thread using `asyncio` and multithreading. This minimizes time per batch and lets multiple documents be processed in parallel, improving throughput.
 
-A clause-by-clause breakdown
+### 5. Language Model Analysis Tailored to Tenancy Contracts  
+Each text chunk is passed to an LLM (OpenAI or Bedrock). The prompt is carefully engineered to:
+- Extract relevant legal clauses (rent, duration, notice period, etc.)
+- Summarize them in plain English
+- Flag unclear or risky language
+- Offer negotiation suggestions
+Results are appended batch-by-batch to ensure even partial analysis is recoverable to ensure resiliency
+**Why this matters:**  
+We're not using generic AI outputs—we're extracting actionable, contract-specific insights with user safety and clarity in mind. Each result is useful even to users with no legal background.
 
-Smart summaries for non-lawyers
+### 6. Smart State Management and Storage in DynamoDB  
+Each result, along with a unique file ID, current status, and last update time, is stored in DynamoDB. 
+**Why this matters:**  
+By writing once after the analysis completes, we reduce the number of write operations, saving cost and complexity. This also ensures that users only receive complete, validated summaries—eliminating the need to handle partial or inconsistent states in the UI. DynamoDB’s low-latency and high-availability guarantees make it ideal for real-time retrieval of contract summaries.
 
-Potential red flags
+### 7. Users Access Results Instantly  
+The frontend polls our backend via an API to check on analysis progress and fetch results once they’re ready.
 
-Suggestions for negotiation
+**Why this matters:**  
+Polling ensures the frontend stays responsive without requiring websockets or long-lived connections. It's simple and robust across unreliable mobile and WiFi connections.
 
-View Results
-Results are stored in S3, retrievable through a user interface or API endpoint (powered by API Gateway + Lambda).
+---
 
-## Tech Stack
-AWS Lambda – Core compute layer for event-driven processing
+## 🧪 Tech Stack (Chosen to Fit the Problem, Not Just the Tools)
 
-Amazon S3 – Stores uploaded contracts and analysis reports
+| Component         | Role in System                                                                 |
+|------------------|---------------------------------------------------------------------------------|
+| CloudFront        | Frontend delivery; fast, serverless, always up                                 |
+| S3                | File storage and event triggering; decouples file ingestion and processing     |
+| Lambda            | Async PDF text extraction, chunking, and AI orchestration                      |
+| API Gateway       | Handles presigned URL generation and result polling                           |
+| DynamoDB          | Low-latency storage for results, status, and file tracking                     |
+| OpenAI / Bedrock  | Domain-specific LLM analysis                                                    |
+| Python & Asyncio  | Efficient backend processing and concurrency management                        |
 
-API Gateway – Triggers Lambda for on-demand analysis
+---
 
-OpenAI / AWS Bedrock – Natural language processing and clause classification
+## 🔍 What Makes This Service Stand Out
 
-Python – Backend logic and orchestration
+**Every architectural choice supports our product goal:**  
+To give non-legal users fast, clear, trustworthy insights from long and complex tenancy documents.
 
-## Real-World Problem Solved
-### Legal Complexity
-Most tenancy agreements are filled with complex language that overwhelms the average person. Tenanalyze decodes these documents using AI.
-
-### Risk Mitigation
-By flagging ambiguous or unfair clauses, tenants and landlords can avoid costly disputes.
-
-### Time Savings
-Manual review of rental agreements is time-consuming. Tenanalyze delivers actionable insights in seconds.
-
-### Scalability
-Built on AWS Lambda, our solution scales automatically—whether you're analyzing one contract or one million.
+- **Security-first uploads** prevent unauthorized access and reduce backend exposure.
+- **True event-driven logic** ensures the system reacts instantly to user actions.
+- **Async processing and chunking** make it scalable and token-limit safe.
+- **LLM orchestration and prompt design** deliver genuinely helpful summaries.
+- **Resilient state tracking** keeps users informed, even during high load or failure.
+- **Serverless design** means zero-maintenance scaling—perfect for high-traffic use or rapid hackathon deployment.
 
 ## Why Tenanalyze Stands Out
 #### Clause Intelligence: Goes beyond keyword search—understands context and intent.
@@ -86,64 +107,3 @@ Challenge Requirement: Build a serverless application using AWS Lambda with at l
 
 ### Built With Passion by Clouders
 Because understanding your rights shouldn't require a law degree.
-
-=======
-# Contract-Analyzer
-
-A tool for analyzing contracts using LLM APIs (OpenAI and Claude).
-
-## Setup
-
-1. **Install UV**
-
-2. **Activate the virtual environment:**
-   ```bash
-   source .venv/bin/activate
-   ```
-
-3. **Install dependencies from `pyproject.toml`:**
-   ```bash
-   uv pip install .
-   ```
-
-   Alternatively, you can add new dependencies with:
-   ```bash
-   uv pip install <package-name>
-   ```
-
-2. Set up environment variables:
-   - Copy `.env.example` to `.env`
-   - Add your API keys to the `.env` file:
-     ```
-     OPENAI_API_KEY=your_openai_api_key_here
-     CLAUDE_API_KEY=your_claude_api_key_here
-     ```
-
-## Usage
-
-The `call_llm_api` function now reads API keys from environment variables, so you no longer need to pass them as arguments:
-
-```python
-from src.data_processing.llm import call_llm_api
-
-# For OpenAI
-call_llm_api("Summarize the following text:", "Your text here", provider="openai")
-
-# For Claude
-call_llm_api("Summarize the following text:", "Your text here", provider="claude")
-```
-
-## Environment Variables
-
-- `OPENAI_API_KEY`: Your OpenAI API key (required for OpenAI provider)
-- `CLAUDE_API_KEY`: Your Claude API key (required for Claude provider)
-
-
-
-> **Note:**  
-> - `uv` is a fast Python package manager and virtual environment tool.  
-> - The `uv add -r requirements.txt` command is equivalent to `uv pip install -r requirements.txt`.  
-> - If you already have a `pyproject.toml`, you can use `uv pip install .` to install your project in editable mode.
-
-For more details, see the [uv documentation](https://github.com/astral-sh/uv).
-
