@@ -99,7 +99,6 @@ function attemptGet(contractId, attemptNumber) {
       }
     });
 }
-
 // Display summary text in the page (add a div with id="summary" in your HTML)
 function displaySummary(text) {
   let summaryDiv = document.getElementById("summary");
