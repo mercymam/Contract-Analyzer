@@ -108,7 +108,6 @@ Challenge Requirement: Build a serverless application using AWS Lambda with at l
 ### Built With Passion by Clouders
 Because understanding your rights shouldn't require a law degree.
 
-## References
 [^1]: https://publications.parliament.uk/pa/cm201314/cmselect/cmcomloc/50/50ii05.htm?utm_source=chatgpt.com
 
 
