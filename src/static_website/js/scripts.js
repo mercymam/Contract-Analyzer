@@ -28,17 +28,15 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
 
   sessionStorage.setItem("currentContractId", contractId);
 
-  // Step 1: GET the upload URL (dummy simulation)
+  // Step 1: GET the upload URL
   fetch(presignedUrl)
     .then(response => response.json())
     .then(data => {
       console.log("GET presigned endpoint response:", data);
 
-      // Step 2: PUT the file and contract_id to the presigned URL
       const presignedUrl = data;
 
-
-       // Step 2: PUT the raw PDF file to the presigned URL
+      // Step 2: PUT the raw PDF file to the presigned URL
       return fetch(presignedUrl, {
         method: "PUT",
         headers: {
@@ -52,11 +50,11 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
         throw new Error(`Upload failed with status ${response.status}`);
       }
 
-      console.log(`PUT upload successful."${response.json}`);
+      console.log("PUT upload successful.");
       alert(`File uploaded successfully.\nAssigned contract_id: ${contractId}\nChecking status shortly...`);
 
       // Step 3: Start repeated GET attempts to fetch results
-      attemptGet(contractId, 1);
+      attemptGet(contractId, 1, Date.now());
     })
     .catch(error => {
       console.error("Error during upload flow:", error);
@@ -64,8 +62,12 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     });
 });
 
-// Retry GET function
-function attemptGet(contractId, attemptNumber) {
+// Retry GET function with 5 min max duration
+function attemptGet(contractId, attemptNumber, startTime) {
+  if (!startTime) {
+    startTime = Date.now();
+  }
+
   console.log(`Attempt ${attemptNumber}: Fetching status for ${contractId}`);
 
   const statusUrl = `https://7ts7q7vvig.execute-api.eu-north-1.amazonaws.com/dev/status/${encodeURIComponent(contractId)}`;
@@ -82,35 +84,36 @@ function attemptGet(contractId, attemptNumber) {
     })
     .then(getData => {
       //console.log("GET response JSON:", getData);
-      console.log("GET response JSON status code:", getData.statusCode);
-      if (getData.statusCode === 404) {
-        if (attemptNumber < 3) {
-          setTimeout(() => attemptGet(contractId, attemptNumber + 1), 60000);
-          console.log("Trying with wait time of 60seconds");
 
+      if (getData.statusCode === 404) {
+        const elapsed = Date.now() - startTime;
+        if (elapsed > 300000) { // 5 minutes
+          alert(`File too large or processing failed after 5 minutes.`);
+          displaySummary("File too large or no summary available.");
         } else {
-          alert(`Sorry, no summary available for contract_id: ${contractId} after 3 attempts.`);
-          displaySummary("No summary available.");
+          console.log(`Status 404. Retrying in 60 seconds (elapsed: ${Math.round(elapsed / 1000)} sec)...`);
+          setTimeout(() => attemptGet(contractId, attemptNumber + 1, startTime), 60000);
         }
       } else {
-          // Display the entire JSON as a string
+        // Display successful result
         displaySummary(JSON.stringify(getData, null, 2));
-
         alert(`Response retrieved successfully for contract_id: ${contractId}`);
       }
-
-    
     })
     .catch(error => {
       console.error(`Error with GET request on attempt ${attemptNumber}:`, error);
-      if (attemptNumber < 3) {
-        setTimeout(() => attemptGet(contractId, attemptNumber + 1), 3000);
+
+      const elapsed = Date.now() - startTime;
+      if (elapsed > 300000) { // 5 minutes
+        alert(`File too large or processing failed after 5 minutes.`);
+        displaySummary("File too large or no summary available.");
       } else {
-        alert(`Sorry, no summary available for contract_id: ${contractId} after 3 attempts.`);
-        displaySummary("No summary available.");
+        console.log(`Retrying after error in 10 seconds (elapsed: ${Math.round(elapsed / 1000)} sec)...`);
+        setTimeout(() => attemptGet(contractId, attemptNumber + 1, startTime), 10000);
       }
     });
 }
+
 // Display summary text in the page (add a div with id="summary" in your HTML)
 function displaySummary(text) {
   let summaryDiv = document.getElementById("summary");
