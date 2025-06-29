@@ -52,7 +52,7 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
         throw new Error(`Upload failed with status ${response.status}`);
       }
 
-      console.log("PUT upload successful.");
+      console.log(`PUT upload successful."${response.json}`);
       alert(`File uploaded successfully.\nAssigned contract_id: ${contractId}\nChecking status shortly...`);
 
       // Step 3: Start repeated GET attempts to fetch results
@@ -68,8 +68,7 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
 function attemptGet(contractId, attemptNumber) {
   console.log(`Attempt ${attemptNumber}: Fetching status for ${contractId}`);
 
-  const fileName = 8962;
-  const statusUrl = `https://7ts7q7vvig.execute-api.eu-north-1.amazonaws.com/dev/status/${encodeURIComponent(fileName)}`;
+  const statusUrl = `https://7ts7q7vvig.execute-api.eu-north-1.amazonaws.com/dev/status/${encodeURIComponent(contractId)}`;
 
   fetch(statusUrl)
     .then(response => {
@@ -82,12 +81,25 @@ function attemptGet(contractId, attemptNumber) {
       }
     })
     .then(getData => {
-      console.log("GET response JSON:", getData);
+      //console.log("GET response JSON:", getData);
+      console.log("GET response JSON status code:", getData.statusCode);
+      if (getData.statusCode === 404) {
+        if (attemptNumber < 3) {
+          setTimeout(() => attemptGet(contractId, attemptNumber + 1), 60000);
+          console.log("Trying with wait time of 60seconds");
 
-      // Display the entire JSON as a string
-      displaySummary(JSON.stringify(getData, null, 2));
+        } else {
+          alert(`Sorry, no summary available for contract_id: ${contractId} after 3 attempts.`);
+          displaySummary("No summary available.");
+        }
+      } else {
+          // Display the entire JSON as a string
+        displaySummary(JSON.stringify(getData, null, 2));
 
-      alert(`Response retrieved successfully for contract_id: ${contractId}`);
+        alert(`Response retrieved successfully for contract_id: ${contractId}`);
+      }
+
+    
     })
     .catch(error => {
       console.error(`Error with GET request on attempt ${attemptNumber}:`, error);
