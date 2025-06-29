@@ -1,8 +1,8 @@
 ## Introduction
 Tenalyse is an AI-powered tenancy contract analyzer designed to simplify and streamline the process of reviewing rental agreements. 
 
-Tenancy contracts are often riddled with complex legal language, vague clauses, and hidden obligations that most tenants—and even some landlords—struggle to fully understand. As a result, people are frequently blindsided by terms they didn’t realize they agreed to, leading to financial loss, legal disputes, and immense stress.
-According to Shelter UK, A UK survey found that 1 in 5 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts—before it's too late.
+Tenancy contracts are often riddled with complex legal language, vague clauses, and hidden obligations that most tenants struggle to fully understand. As a result, people are frequently blindsided by terms they didn’t realize they agreed to, leading to financial loss, legal disputes, and immense stress.
+According to Shelter UK, A UK survey found that 1 in 4 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts—before it's too late[^1].
 
 Built using AWS Lambda as its backbone, Tenalyse intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
 
@@ -107,3 +107,9 @@ Challenge Requirement: Build a serverless application using AWS Lambda with at l
 
 ### Built With Passion by Clouders
 Because understanding your rights shouldn't require a law degree.
+
+## References
+[^1]: https://publications.parliament.uk/pa/cm201314/cmselect/cmcomloc/50/50ii05.htm?utm_source=chatgpt.com
+
+
+
