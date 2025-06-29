@@ -40,8 +40,8 @@ jobs:
     
       - name: Switch to another branch
         run: |
-          git fetch origin CA-003
-          git checkout CA-003
+          git fetch origin CA-004
+          git checkout CA-004
           
       - name: Update cloudfront hosted website
         run: |
