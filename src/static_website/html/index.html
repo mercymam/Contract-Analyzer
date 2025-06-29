@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Contract Analyser</title>
-  <!-- Link external CSS -->
+  <!-- Link external CSS if you have one -->
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
@@ -16,6 +16,16 @@
     <input type="file" id="document" name="contract" accept=".pdf,.doc,.docx,.txt" />
     <button type="submit">Submit</button>
   </form>
+
+  <!-- label  -->
+  <div id="labelContainer" hidden>
+    <label>Analysing your contract</label>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
 
   <!-- Result display area -->
   <div id="summary" style="margin-top: 20px; font-size: 1.2em; white-space: pre-wrap; text-align: center;"></div>
