@@ -100,6 +100,7 @@ function attemptGet(contractId, attemptNumber, startTime) {
         }
       } else {
         completeProgressBar();
+        console.log("data", getData)
         displaySummary(JSON.stringify(getData, null, 2));
         //alert(`Response retrieved successfully for contract_id: ${contractId}`);
       }
@@ -173,19 +174,33 @@ function completeProgressBar() {
   
 }
 
-// Display summary text
+
+// // Display summary text in the page (add a div with id="summary" in your HTML)
+// function displaySummary(text) {
+//   let summaryDiv = document.getElementById("summary");
+//   if (!summaryDiv) {
+//     summaryDiv = document.createElement("div");
+//     summaryDiv.id = "summary";
+//     document.body.appendChild(summaryDiv);
+//   }
+
+//   // Convert markdown to HTML and set innerHTML inside a markdown-body div
+//   // const htmlContent = `<div class=\"markdown-body\">${text}</div>`;
+//   summaryDiv.innerHTML = htmlContent;
+// }
+
 function displaySummary(text) {
   let summaryDiv = document.getElementById("summary");
   if (!summaryDiv) {
     summaryDiv = document.createElement("div");
     summaryDiv.id = "summary";
-    summaryDiv.style.marginTop = "20px";
-    summaryDiv.style.padding = "10px";
-    summaryDiv.style.border = "1px solid #ccc";
-    summaryDiv.style.backgroundColor = "#f4f4f4";
-    summaryDiv.style.maxWidth = "600px";
-    summaryDiv.style.margin = "20px auto";
     document.body.appendChild(summaryDiv);
   }
-  summaryDiv.textContent = text;
+
+  // Unescape newlines and remove extra quotes if present
+  let cleanText = text.replace(/\\n/g, '\n').replace(/^"|"$/g, '');
+
+  // Convert markdown to HTML using marked.js
+  const htmlContent = `<div class="markdown-body">${marked.parse(cleanText)}</div>`;
+  summaryDiv.innerHTML = htmlContent;
 }

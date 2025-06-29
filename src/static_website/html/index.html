@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Contract Analyser</title>
   <!-- Link external CSS if you have one -->
   <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body>
-  <h1>Welcome To</h1>
 
-  <img src="../images/tenalyzer.png" alt="My Image" class="logo" />
+<body>
+  <!-- <h1>Welcome To</h1> -->
+
+  <img src="../images/tenalyser.png" alt="My Image" class="logo" />
 
   <form id="uploadForm" class="center-form" enctype="multipart/form-data">
     <label for="document">Upload your Tenancy Agreement:</label>
@@ -32,5 +35,44 @@
 
   <!-- Link external JS -->
   <script src="../js/scripts.js"></script>
+
+  <script>
+    function markdownToHtml(markdown) {
+      let html = markdown;
+
+      // Bold (**text**)
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      // Italic (*text*)
+      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+      // Newlines (\n) to <br>
+      html = html.replace(/\\n/g, '<br>');
+
+      // Bullets (- )
+      html = html.replace(/- (.*?)(<br>|$)/g, '<li>$1</li>');
+
+      // Wrap <li> in <ul> if any <li> present
+      if (html.includes('<li>')) {
+        html = html.replace(/(<li>[\s\S]*<\/li>)/g, '<ul>$1</ul>');
+      }
+
+      // Remove any accidental double <ul>
+      html = html.replace(/<\/ul>\s*<ul>/g, '');
+
+      // Optionally: handle headings (**Summary:**, etc.)
+      html = html.replace(/<strong>(.*?)<\/strong>:/g, '<h3>$1</h3>');
+
+      // Clean up: remove <ul></ul> if empty
+      html = html.replace(/<ul><\/ul>/g, '');
+
+      return html;
+    }
+
+    // const markdown = `**Summary:**\n- **Rental Amount:** £3,466.66 per calendar month\n- **Deposit Amount:** £3,600.00\n- **Lease Dates:** 01/07/2019 to 30/06/2020\n- **Payment Frequency:** Monthly\n- **Responsibilities:**\n - **Tenant:** Maintain clean condition, pay rent on time, cover utility bills, report damages promptly, find replacement tenant for early exit.\n - **Landlord:** Return deposit, handle maintenance, comply with legislation.`;
+    // const html = markdownToHtml(markdown);
+    // console.log(html);
+  </script>
 </body>
+
 </html>
