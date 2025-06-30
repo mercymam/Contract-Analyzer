@@ -1,12 +1,12 @@
 ## Introduction
-Tenalyse is an AI-powered tenancy contract analyzer designed to simplify and streamline the process of reviewing rental agreements. 
+Tenalyser is an AI-powered tenancy contract analyzer designed to simplify and streamline the process of reviewing rental agreements. 
 
 Tenancy contracts are often riddled with complex legal language, vague clauses, and hidden obligations that most tenants struggle to fully understand. As a result, people are frequently blindsided by terms they didn’t realize they agreed to, leading to financial loss, legal disputes, and immense stress.
 According to Shelter UK, A UK survey found that 1 in 4 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts, before it's too late[^1].
 
-Built using AWS Lambda as its backbone, Tenalyse intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
+Built using AWS Lambda as its backbone, Tenalyser intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
 
-Tenalyse ensures tenants are never caught off-guard by legal jargon again.
+Tenalyser ensures tenants are never caught off-guard by legal jargon again.
 
 ## How to use
 1. Upload a tenancy contract to our website: **https://d36zj33ar35qel.cloudfront.net**.  You can use one of the sample contracts from the "Tenancy Agreement" folder or upload your own.
@@ -89,7 +89,7 @@ To give non-legal users fast, clear, trustworthy insights from long and complex 
 - **Resilient state tracking** keeps users informed, even during high load or failure.
 - **Serverless design** means zero-maintenance scaling—perfect for high-traffic use or rapid hackathon deployment.
 
-## Why Tenalyse Stands Out
+## Why Tenalyser Stands Out
 #### Clause Intelligence: Goes beyond keyword search—understands context and intent.
 
 #### AI-First: Leverages the latest in NLP for legal document parsing.
