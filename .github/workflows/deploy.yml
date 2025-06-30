@@ -33,9 +33,27 @@ jobs:
         run: |
           cp lambda_function.py package/
           cp -r src/ package/src/
+          
       - name: Zip package into lambda.zip
         run: |
           cd package && zip -r ../lambda.zip .
+    
+      - name: Switch to another branch
+        run: |
+          git fetch origin CA-004
+          git checkout CA-004
+          
+      - name: Update cloudfront hosted website
+        run: |
+          if aws s3 ls s3://contract-analyzer-bucket/website/ | grep -q .; then
+            echo "Folder exists, deleting..."
+            aws s3 rm s3://contract-analyzer-bucket/website/ --recursive
+          else
+            echo "Folder does not exist, skipping delete."
+          fi
+          
+          aws s3 cp src/static_website/ s3://contract-analyzer-bucket/website/ --recursive
+
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code --function-name arn:aws:lambda:eu-north-1:771936571040:function:Contract_Analyzer --zip-file fileb://lambda.zip

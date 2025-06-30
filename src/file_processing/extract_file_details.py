@@ -1,5 +1,7 @@
 import logging
 import asyncio
+import os
+
 from pypdf import PdfReader
 
 logging.basicConfig(level=logging.INFO)
