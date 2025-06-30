@@ -2,7 +2,7 @@
 Tenalyse is an AI-powered tenancy contract analyzer designed to simplify and streamline the process of reviewing rental agreements. 
 
 Tenancy contracts are often riddled with complex legal language, vague clauses, and hidden obligations that most tenants struggle to fully understand. As a result, people are frequently blindsided by terms they didn’t realize they agreed to, leading to financial loss, legal disputes, and immense stress.
-According to Shelter UK, A UK survey found that 1 in 4 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts—before it's too late[^1].
+According to Shelter UK, A UK survey found that 1 in 4 renters faced surprise charges or conditions due to unnoticed clauses in their tenancy agreements. Thereby, displaying a pressing need for a transparent, intelligent tool that helps tenants and landlords clearly understand what's in their contracts, before it's too late[^1].
 
 Built using AWS Lambda as its backbone, Tenalyse intelligently scans tenancy contracts, identifies key clauses, flags potential issues, and highlights crucial details, thereby making legal documents more transparent and accessible for everyone.
 
@@ -48,7 +48,7 @@ Each text chunk is passed to an LLM (OpenAI or Bedrock). The prompt is carefully
 - Offer negotiation suggestions
 Results are appended batch-by-batch to ensure even partial analysis is recoverable to ensure resiliency
 **Why this matters:**  
-We're not using generic AI outputs—we're extracting actionable, contract-specific insights with user safety and clarity in mind. Each result is useful even to users with no legal background.
+We're not using generic AI outputs, we're extracting actionable, contract-specific insights with user safety and clarity in mind. Each result is useful even to users with no legal background.
 
 ### 6. Smart State Management and Storage in DynamoDB  
 Each result, along with a unique file ID, current status, summary and last update time, is stored in DynamoDB. 
