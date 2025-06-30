@@ -8,7 +8,11 @@ Built using AWS Lambda as its backbone, Tenalyse intelligently scans tenancy con
 
 Tenalyse ensures tenants are never caught off-guard by legal jargon again.
 
-## 🚀 How Tenalyser Works
+## How to use
+1. Upload a tenancy contract to our website: **https://d36zj33ar35qel.cloudfront.net**.  You can use one of the sample contracts from the "Tenancy Agreement" folder or upload your own.
+2. Wait for the results. Processing time depends on the size of the file, but it typically completes within a few seconds for most documents.
+
+## How Tenalyser Works
 
 ### 1. Upload Through a Seamless Web Interface  
 Users start at our lightweight web portal:  
